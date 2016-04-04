@@ -11,6 +11,8 @@ w.resize(640, 480)
 
 print ("Added from master")
 
+print ("Added from master2")
+
 w.setWindowTitle("Main window") 
 w.show() 
  
