@@ -9,6 +9,8 @@ a = QApplication(sys.argv)
 w = QWidget()
 w.resize(640, 480)
 
+print ("Added from master")
+
 w.setWindowTitle("Main window") 
 w.show() 
  
