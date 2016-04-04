@@ -8,6 +8,8 @@ a = QApplication(sys.argv)
  
 w = QWidget()
 w.resize(640, 480)
+
+print (1)
  
 w.setWindowTitle("Main window") 
 w.show() 
