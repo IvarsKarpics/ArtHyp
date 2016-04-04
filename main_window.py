@@ -10,6 +10,7 @@ w = QWidget()
 w.resize(640, 480)
 
 print ("Added from master")
+print ("Added from 1.0")
 
 print ("Added from master2")
 
