@@ -152,22 +152,7 @@ if (qt_variant == "PyQt4") or (qt_variant is None and not qt_imported):
     #   !! this means the classes below will not exist !!
     # but code is guaranteed to be compatible
     try:
-        """
-        import sip
-        api2_classes = [
-            'QData','QDateTime','QString','QTextStream',
-            'QTime','QUrl', 'QVariant',
-        ]
-        for cl in api2_classes:
-            try:
-                sip.setapi(cl,2)
-            except:
-                pass
-        """
-
-        from PyQt4.QtCore import *
-        from PyQt4.QtGui import *
-        from PyQt4.uic import *
+        from PyQt4.QtGui import QApplication, QWidget
 
         def getQApp():
             return qApp
@@ -180,12 +165,6 @@ if (qt_variant == "PyQt4") or (qt_variant is None and not qt_imported):
         pyqt_version_no = list(map(int, ver))[:3]
     except BaseException:
         pass
-
-    try:
-        from PyQt4.QtWebKit import * 
-    except ImportError:
-        pass
-
 #
 # PySide
 #
@@ -227,28 +206,6 @@ if (qt_variant == "PySide") or (qt_variant is None and not qt_imported):
 #
 #  Matplotlib backend assignment
 #
-if mpl_imported:
-    if qt_variant == "PyQt5":
-        if mpl_version_no < [1, 4, 0]:
-            mpl_compat = False
-        else:
-            mpl_compat = True
-            matplotlib.use("Qt5Agg")
-
-    elif qt_variant == "PySide":
-        if mpl_version_no < [1, 1, 0]:
-            mpl_compat = False
-        else:
-            mpl_compat = True
-            matplotlib.use("Qt4Agg")
-            from matplotlib import rcParams
-
-            rcParams["backend.qt4"] = "PySide"
-
-    elif qt_variant == "PyQt4":
-        mpl_compat = True
-        matplotlib.use("Qt4Agg")
-
 if "QString" not in globals():
     QString = str
 
@@ -270,86 +227,3 @@ if qt_imported and mpl_imported:
     else:
         print("  !!! Matplotlib is NOT COMPATIBLE with PyQt !!!")
 """
-
-if qt_variant in ("PyQt4", "PyQt5", "PySide"):
-    # QHeaderView is not defined for Qt3, so the import broke without the 'if'
-    class RotatedHeaderView(QHeaderView):
-        def __init__(self, parent=None):
-            super(RotatedHeaderView, self).__init__(Qt.Horizontal, parent)
-            self.setMinimumSectionSize(22)
-
-        def paintSection(self, painter, rect, logicalIndex):
-            painter.save()
-            # translate the painter such that rotate will rotate around the correct
-            # point
-            painter.translate(rect.x() + rect.width(), rect.y())
-            painter.rotate(90)
-            # and have parent code paint at this location
-            newrect = QRect(0, 0, rect.height(), rect.width())
-            super(RotatedHeaderView, self).paintSection(painter, newrect, logicalIndex)
-            painter.restore()
-
-        def minimumSizeHint(self):
-            size = super(RotatedHeaderView, self).minimumSizeHint()
-            size.transpose()
-            return size
-
-        def sectionSizeFromContents(self, logicalIndex):
-            size = super(RotatedHeaderView, self).sectionSizeFromContents(logicalIndex)
-            size.transpose()
-            return size
-
-    class QDoubleSlider(QSlider):
-
-        doubleValueChanged = pyqtSignal(float)
-
-        def __init__(self, orientation=Qt.Horizontal, parent=None):
-            super(QSlider, self).__init__(orientation, parent)
-            self.decimals = 5
-            self._max_int = 10 ** self.decimals
-
-            super(QSlider, self).setMinimum(0)
-            super(QSlider, self).setMaximum(self._max_int)
-
-            self._min_value = 0.0
-            self._max_value = 1.0
-
-            self.valueChanged.connect(self.value_changed)
-
-        def value_changed(self, value):
-            self.doubleValueChanged.emit(value / float(self._max_int))
-
-        @property
-        def _value_range(self):
-            return self._max_value - self._min_value
-
-        def value(self):
-            return (
-                float(super(QSlider, self).value()) / self._max_int * self._value_range
-                + self._min_value
-            )
-
-        def setValue(self, value):
-            super(QSlider, self).setValue(
-                int((value - self._min_value) / self._value_range * self._max_int)
-            )
-
-        def setMinimum(self, value):
-            if value > self._max_value:
-                raise ValueError("Minimum limit cannot be higher than maximum")
-
-            self._min_value = value
-            self.setValue(self.value())
-
-        def setMaximum(self, value):
-            if value < self._min_value:
-                raise ValueError("Minimum limit cannot be higher than maximum")
-
-            self._max_value = value
-            self.setValue(self.value())
-
-        def minimum(self):
-            return self._min_value
-
-        def maximum(self):
-            return self._max_value
