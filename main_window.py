@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 import sys
-from PyQt4.QtGui import QApplication, QWidget
+from QtImport import QApplication, QWidget
  
 a = QApplication(sys.argv)       
  
