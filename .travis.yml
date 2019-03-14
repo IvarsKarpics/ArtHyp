@@ -20,4 +20,4 @@ install:
   - sudo make install
   - cd ..
 script:
-  - pylint -E *
+  - pylint -E main_window.py
