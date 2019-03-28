@@ -1,21 +1,19 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-#
+
+# PyQt sandbox
+
+
 import sys
 from QtImport import QApplication, QWidget
- 
-a = QApplication(sys.argv)       
- 
-w = QWidget()
-w.resize(640, 480)
 
-print ("Added from master")
-print ("Added from 1.0")
-print ("Added from master2")
-print ("1.0_0")
-print ("master_0")
 
-w.setWindowTitle("Main window") 
-w.show() 
- 
-sys.exit(a.exec_())
+qt_app = QApplication(sys.argv)
+
+main_widget = QWidget()
+main_widget.resize(640, 480)
+
+main_widget.setWindowTitle("Main window")
+main_widget.show()
+
+sys.exit(qt_app.exec_())
